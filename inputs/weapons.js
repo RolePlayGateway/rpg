@@ -8,5 +8,6 @@ module.exports = [
   'hammer',
   'rapier',
   'staff',
-  'sword'
+  'sword',
+  'whip'
 ].map((name) => require(`./weapons/${name}`));
