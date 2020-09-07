@@ -16,6 +16,7 @@
     "review:coverage": "npm run coverage && ecstatic reports/code-coverage",
     "start": "npm run compile && node scripts/node.js",
     "static": "npm run build && ecstatic assets",
+    "telnet": "node scripts/telnet.js",
     "test": "nyc mocha tests"
   },
   "repository": {
@@ -39,8 +40,7 @@
   },
   "homepage": "https://github.com/FabricLabs/rpg#readme",
   "dependencies": {
-    "@fabric/core": "FabricLabs/fabric#pruning",
-    "@fabric/http": "FabricLabs/web#fabric-0.1.0-develop",
+    "@fabric/core": "martindale/fabric#peering-wallet",
     "body-parser": "^1.18.3",
     "canvas": "^2.4.1",
     "dotparser": "^0.4.0",
@@ -52,6 +52,7 @@
     "phaser": "2.6.2",
     "pixel-editor": "^0.2.0",
     "semantic-ui-react": "^0.88.2",
+    "telnet2": "^0.0.1",
     "ws": "^6.1.2"
   },
   "devDependencies": {
