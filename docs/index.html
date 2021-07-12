@@ -38,10 +38,39 @@
 
 
     <section>
-        <article><h1>RPG()</h1>
+        <article><h1><code>@rpg/core</code></h1>
 <p>simple Fabric-hosted RPG</p>
 <h2>Quick Start</h2>
-<p><code>npm install &amp;&amp; npm start</code></p></article>
+<p><code>npm install &amp;&amp; npm start</code></p>
+<h2>Developers</h2>
+<pre class="prettyprint source"><code>mkdir ~/workspace && cd ~/workspace # create workspace (if not exist) and cd
+
+# fork & clone each repo for contributions you might make
+git clone git@github.com:YOUR_USERNAME/rpg.git
+git clone git@github.com:YOUR_USERNAME/http.git
+git clone git@github.com:YOUR_USERNAME/fabric.git
+
+# configure symlinks for each independent repository
+cd fabric && git checkout rpg-0.2.0-develop && yarn link
+cd ../http && git checkout fabric-0.1.0 && yarn link && yarn link @fabric/core
+cd ../rpg && git checkout rpg-0.2.0-develop && yarn link @fabric/core && yarn link @fabric/http
+
+# install & start
+yarn install
+yarn start
+
+# enable use of development version for target...
+yarn link @fabric/core
+yarn link @fabric/http
+
+# Restart the main process and check dependencies.
+# Good luck, have fun!
+#                                              ~ E
+</code></pre>
+<h3>API</h3>
+<p>See output of <code>npm run docs</code> for an HTTP-serving URL with well-organized
+documentation.  All source code is included, so feel free to submit proposals
+for potential changes.</p></article>
     </section>
 
 
@@ -50,7 +79,7 @@
 
 
     </div>
-    <nav><h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a></li><li><a href="RPG.html">RPG</a></li><li><a href="World.html">World</a></li></ul></nav>
+    <nav><h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a></li><li><a href="Map.html">Map</a></li><li><a href="Player.html">Player</a></li><li><a href="RPG.html">RPG</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="Word.html">Word</a></li><li><a href="World.html">World</a></li></ul></nav>
     <br class="clear" />
     <footer>
         <a href="https://github.com/FabricLabs/rpg">git://</a> &middot; <a href="https://chat.roleplaygateway.com/#/room/#rpg:roleplaygateway.com">Community</a>

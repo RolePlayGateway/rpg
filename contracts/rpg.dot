@@ -1,0 +1,10 @@
+digraph RPG {
+  "genesis" -> "ready" [label="start"]
+  "ready" -> "computing" [label="tick"]
+  "computing" -> "ready" [label="loop"]
+  "ready" -> "saving" [label="save"]
+  "saving" -> "ready" [label="next"]
+  
+  "computing" -> "error"
+  "saving" -> "error"
+}

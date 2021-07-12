@@ -1,5 +1,9 @@
 'use strict';
 
+const {
+  TICK_INTERVAL
+} = require('../constants');
+
 const http = require('http');
 const express = require('express');
 const session = require('express-session');
@@ -34,6 +38,9 @@ class Hub extends Fabric.Oracle {
 
     this.rpg = new RPG(this.config);
     this.server = new Server();
+    this.timer = setInterval(function () {
+      console.log('[RPG:HUB]', 'checking for heartbeat:', this.validator);
+    }, TICK_INTERVAL);
 
     return this;
   }

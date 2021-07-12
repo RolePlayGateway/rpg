@@ -21,18 +21,38 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>'use strict';
+            <pre class="prettyprint source linenums"><code>// # `@rpg/core`
+// Peer-to-peer game engine, powered by Fabric.
+'use strict';
+
+// Constants
+const {
+  TICK_INTERVAL,
+  GENESIS_HASH
+} = require('../constants');
 
 // Fabric Core
 const Fabric = require('@fabric/core');
 
-// Load in types...
+// Dependencies
+const BN = require('bn.js');
+const One = new BN('1');
+const Zero = new BN('0');
+
+// ### Internal Types
+// Here we've created a few internal classes to keep IdleRPG well-organized.
+const Avatar = require('@fabric/http/types/avatar');
+const Encounter = require('./encounter');
+// const Modulator = require('./modulator');
+const Entity = require('./entity');
 const World = require('./world');
+const Player = require('./player');
 
 /**
  * Primary RPG builder.
+ * @property {State} state Holds state for the game.
  */
-class RPG extends Fabric.App {
+class RPG extends Fabric.Service {
   /**
    * Build an RPG with the {@link Fabric} tools.
    * @param  {Object} configuration Settings to configure the RPG with.
@@ -41,37 +61,52 @@ class RPG extends Fabric.App {
   constructor (configuration) {
     super(configuration);
 
+    // Begin @internal typing
     this['@type'] = 'RPG';
     this['@configuration'] = Object.assign({
       name: 'RPG',
       path: './stores/rpg',
-      authority: 'rpg.verse.pub',
+      authority: 'api.roleplaygateway.com',
       persistent: true,
-      globals: {
-        tick: 0
-      },
-      resources: {
-        'Peer': {
-          attributes: {
-            address: { type: 'String', required: true, id: true }
-          }
-        }
-      },
+      globals: { tick: 0 },
       canvas: {
-        height: 300,
-        width: 400
+        height: 256,
+        width: 256
       },
-      interval: 60000
+      interval: TICK_INTERVAL
     }, configuration);
 
-    this['@world'] = new World(this['@configuration']['entropy']);
+    // ### Our Game State
+    // The Game State holds all information necessary to reconstruct your game.
+    // We use human-friendly names and keep things as small as possible, so do
+    // your part in keeping this well-maintained!
+    this.state = {
+      identities: {}, // shared identities (public)
+      channels: {}, // stores a list of channels.
+      players: {}, // players are users... !
+      services: {}, // services are networks
+      users: {}, // users are network clients,
+      tip: null
+    };
+
+    this['@avatar'] = new Avatar({ seed: this['@configuration']['entropy'] });
+    this['@world'] = new World({ seed: this['@configuration']['entropy'] });
+    this['@player'] = new Player();
+    this['@genesis'] = this['@configuration'].genesis || GENESIS_HASH;
+    // this['@modulator'] = new Modulator();
+    this['@entity'] = Object.assign({
+      clock: 0,
+      entropy: this['@configuration']['entropy']
+    }, this.state);
+
+    // old vestiges of times long since past
     this['@data'] = Object.assign({
-      globals: {
-        tick: 0
-      }
+      globals: { tick: 0 }
     }, this['@configuration']);
 
     this.timer = null;
+    this.avatar = this['@avatar'];
+    this.machine = new Fabric.Machine();
     this.remote = new Fabric.Remote({
       host: this['@configuration'].authority
     });
@@ -79,32 +114,294 @@ class RPG extends Fabric.App {
     return this;
   }
 
-  async tick () {
+  static get Entity () {
+    return Entity;
+  }
+
+  static get Encounter () {
+    return Encounter;
+  }
+
+  get identities () {
+    // TODO: ensure all private data remains private (prove!)
+    return this.state.identities;
+  }
+
+  /**
+   * Increment the {@link Machine} by one clock cycle.
+   * @param  {Boolean} [notify=true] When `true` will emit {@link Meessage} events.
+   * @return {Promise}               Resolves with {@link State} `@id` (for recordkeeping).
+   */
+  async tick (notify = true) {
     console.log('[RPG]', 'Beginning tick...', Date.now());
+    console.log('[RPG]', 'STATE (@entity)', this['@entity']);
 
-    let commit = this.commit();
+    let origin = new Fabric.State(this['@entity']);
+    let observer = new Fabric.Observer(origin['@data']);
+
+    // Our first and primary order of business is to update the clock.  Once
+    // we've computed the game state for the next round, we can share it with
+    // the world.
+    //
+    // Let's finish our work up front.
+    this['@entity'].clock = One.add(new BN(this['@entity'].clock)).toString();
+    this['@entity'].entropy = this.machine.sip();
+
+    console.log('[ENTROPY:CHECK]', 'clock:', this['@entity'].clock, 'entropy:', this['@entity'].entropy);
+
+    // let commit = this.commit();
     // console.log('tick:', commit);
+    // let ticks = this.get(`/ticks`) || [];
 
-    this.emit('tick'); // note: no return value
+    // if (!ticks.length) ticks.push(origin.id);
+
+    // Snapshot of our state...
+    let data = Object.assign({}, this.state, this['@entity']);
+    let state = new Fabric.State(data);
+    // let json = state.render();
+
+    // Update global for sanity checks...
+    this.parent = origin.id;
+    this.state = data;
+
+    this.log('[RPG:TICK]', `#${state.id}`, data);
+
+    // Save the game state to disk.
+    await this.save();
+
+    // Looks like we're all done, so let's be courteous and notify subscribers.
+    if (notify) {
+      this.emit('tick', state.id);
+    }
+
     return this;
+  }
+
+  async _POST (path, data) {
+    console.log('posting:', path, data);
+    let result = null;
+
+    try {
+      let id = await super._POST(path, data);
+      console.log('path (id?) from post:', id);
+      result = id;
+    } catch (E) {
+      console.log('RPG COULD NOT CREATE:', E);
+    }
+
+    try {
+      let obj = await this._GET(result);
+      console.log('posted:', result, path, data);
+    } catch (E) {
+      console.error('RPG COULD NOT POST:', path, data, E);
+    }
+
+    // assign state
+    // this.state['players'][obj.id] = obj;
+
+    // commit
+    this.commit();
+
+    return result;
+  }
+
+  /* async _registerActor (data) {
+    await super._registerActor(data);
+
+    let result = null;
+    let state = new Fabric.State(data);
+    let transform = [state.id, state.render()];
+
+    let actor = Object.assign({
+      id: `local/${state.id}`,
+      type: data.type || 'Actor',
+      sharing: transform
+    }, data);
+
+    try {
+      result = await this._POST(`/actors`, actor);
+    } catch (E) {
+      return this.error('Cannot register place:', E);
+    }
+
+    return result;
+  } */
+
+  async _createIdentity () {
+    let item = null;
+    let result = null;
+
+    // TODO: async generation
+    let key = new Fabric.Key();
+    let struct = {
+      name: prompt('What shall be your name?'),
+      address: key.address,
+      private: key.private.toString('hex'),
+      public: key.public
+    };
+
+    try {
+      item = await this._POST(`/identities`, struct);
+      console.log('create identity posted:', item);
+      result = await this._GET(item);
+    } catch (E) {
+      console.error('broken:', E);
+    }
+
+    this.identities[struct.address] = struct;
+    this.identity = struct;
+
+    // TODO: remove public key from character, use only address (or direct hash)
+    return {
+      address: struct.address,
+      public: struct.public
+    };
   }
 
   async _registerPlayer (data) {
     let result = null;
+    let state = new Fabric.State(data);
+    let transform = [state.id, state.render()];
+    let prior = null;
 
     try {
-      result = await this._POST(`/players`, data);
+      prior = this.get(`/players/${state.id}`);
     } catch (E) {
-      this.error(E);
+      console.warn('[RPG]', 'No previous player (registering new):', E);
+    }
+
+    let profile = Object.assign({
+      type: 'Player',
+      sharing: transform
+    }, data, prior || {});
+
+    try {
+      await this.set(`/players/${state.id}`, profile);
+      result = this.get(`/players/${state.id}`);
+    } catch (E) {
+      return console.error('Cannot register player:', E);
     }
 
     return result;
   }
 
+  async _registerPlace (data) {
+    let result = null;
+    let state = new Fabric.State(data);
+    let transform = [state.id, state.render()];
+
+    console.log('registering place:', data);
+
+    let place = Object.assign({
+      id: `local/${state.id}`,
+      type: 'Place',
+      sharing: transform
+    }, data);
+
+    try {
+      await this.set(`/places/${state.id}`, place);
+      result = this.get(`/places/${state.id}`);
+    } catch (E) {
+      return console.error('Cannot register place:', E);
+    }
+
+    return result;
+  }
+
+  async _syncFromGateway () {
+    let places = await this.remote._GET('/places');
+
+    console.log('got places:', places);
+    // TODO: make async
+    for (let i = 0; i &lt;= places.length; i++) {
+      await this._registerPlace(places[i]);
+    }
+
+    return this;
+  }
+
+  async build () {
+    this['@world'].map._build();
+    this['@world'].map._dump();
+  }
+
+  async dump () {
+    let id = await this.save();
+    let dump = JSON.stringify(this.state);
+    console.log('memory dump:', dump);
+    return dump;
+  }
+
+  /**
+   * Compute the game state.
+   * @param  {Mixed}  [input=null] Player input, if any.
+   * @return {Promise}             Resolves with result.
+   */
+  async compute (input = null) {
+    let object = new Fabric.State(input);
+    return object.id;
+  }
+
+  async save () {
+    let result = null;
+    let data = JSON.stringify(this.state);
+    let state = new Fabric.State(data);
+
+    console.log('[RPG]', 'saving:', data);
+
+    try {
+      // let memory = await this._PUT('/memories', data);
+      // let doc = await this.store.set(`/memories/${state.id}`, state.render());
+      let doc = await this.store.set(`/tip`, state.render());
+      result = state.id;
+    } catch (E) {
+      this.error('cannot save:', E);
+    }
+
+    return result;
+  }
+
+  async restore () {
+    let blob = null;
+    let data = null;
+
+    try {
+      blob = await this._GET(`/tip`);
+    } catch (E) {
+      console.error('Could not GET old state', E);
+    }
+
+    console.log('[RPG]', 'attempting to restore:', blob);
+
+    try {
+      let result = JSON.parse(blob);
+      if (result) {
+        this['@entity'] = result;
+        this.state = result;
+      }
+    } catch (E) {
+      console.error('Could not load restore:', E);
+    }
+
+    this.commit();
+
+    return data;
+  }
+
   async start () {
     await super.start();
-    await this['@world'].start();
+
+    // TODO: clean up the clock
+    this.state.clock = Zero;
+
+    await this.restore();
+    // TODO: import latest from Gateway
+    // await this._syncFromGateway();
+    // await this['@world'].start();
+
+    // TODO: document the process
     this.timer = setInterval(this.tick.bind(this), this['@configuration'].interval);
+
     return this;
   }
 
@@ -124,7 +421,7 @@ module.exports = RPG;
 
 
     </div>
-    <nav><h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a></li><li><a href="RPG.html">RPG</a></li><li><a href="World.html">World</a></li></ul></nav>
+    <nav><h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a></li><li><a href="Map.html">Map</a></li><li><a href="Player.html">Player</a></li><li><a href="RPG.html">RPG</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="Word.html">Word</a></li><li><a href="World.html">World</a></li></ul></nav>
     <br class="clear" />
     <footer>
         <a href="https://github.com/FabricLabs/rpg">git://</a> &middot; <a href="https://chat.roleplaygateway.com/#/room/#rpg:roleplaygateway.com">Community</a>

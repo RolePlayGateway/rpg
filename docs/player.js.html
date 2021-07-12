@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Source: player.js &middot; Docs</title>
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+  </head>
+  <body>
+    <div id="main">
+      <h1 class="page-title">Source: player.js</h1>
+      
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict';
+
+const Fabric = require('@fabric/core');
+const Avatar = require('@fabric/http/types/avatar');
+const Entity = require('./entity');
+
+class Player extends Entity {
+  /**
+   * In-game representation of our humble hero, the {@link User}.
+   * @param  {Object} [settings={}] Settings to pass from the player's will.
+   * @return {Player}               Player-controllable instance of themselves.
+   */
+  constructor (settings = {}) {
+    super(settings);
+
+    this.settings = Object.assign({
+      created: Date.now()
+    }, settings);
+
+    this.name = null;
+    this.position = null;
+    this.presence = 'offline';
+    this.avatar = new Avatar({
+      height: 256,
+      width: 256,
+      alpha: null
+    });
+
+    this.key = new Fabric.Key();
+    this.id = this.key.address;
+
+    return this;
+  }
+
+  async _revealToWorld () {
+    await this.avatar._drawAvatar();
+    await this.avatar.render();
+    await this._presenceToReady();
+    console.log('rendered avatar:', this.avatar.render());
+    console.log('rendered avatar toDataURI:', this.avatar.toDataURI());
+    return this;
+  }
+
+  async _presenceFromReady () {
+    this.presence = 'online';
+    this.commit();
+    return this;
+  }
+
+  async _setName (name) {
+    this.name = name;
+    this.commit();
+    return this;
+  }
+
+  _isOther () {
+    return this.other;
+  }
+
+  render () {
+    return `&lt;rpg-player>&lt;player-address>${this.key.address}&lt;/player-address>&lt;/rpg-player>`;
+  }
+}
+
+module.exports = Player;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    </div>
+    <nav><h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a></li><li><a href="Map.html">Map</a></li><li><a href="Player.html">Player</a></li><li><a href="RPG.html">RPG</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="Word.html">Word</a></li><li><a href="World.html">World</a></li></ul></nav>
+    <br class="clear" />
+    <footer>
+        <a href="https://github.com/FabricLabs/rpg">git://</a> &middot; <a href="https://chat.roleplaygateway.com/#/room/#rpg:roleplaygateway.com">Community</a>
+    </footer>
+    <script> prettyPrint(); </script>
+    <script src="scripts/linenumber.js"></script>
+  </body>
+</html>

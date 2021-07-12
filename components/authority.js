@@ -7,7 +7,7 @@ class Authority extends Fabric.Oracle {
     super(configuration);
 
     this.config = Object.assign({
-      host: 'chat.roleplaygateway.com',
+      host: 'localhost',
       port: 9999
     }, configuration);
 

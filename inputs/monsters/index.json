@@ -1,0 +1,17 @@
+[
+  { "name": "Crab", "attack": 2, "speed": 2 },
+  { "name": "Goblin", "attack": 4, "speed": 4 },
+  { "name": "Hobgoblin", "attack": 6, "speed": 3 },
+  { "name": "Kobold", "attack": 3, "speed": 6 },
+  { "name": "Ogre", "attack": 8, "speed": 2 },
+  { "name": "Orc", "attack": 7, "speed": 4 },
+  { "name": "Troll", "attack": 10, "speed": 2 },
+  { "name": "Spirit", "attack": 3, "speed": 10 },
+  { "name": "Shadow", "attack": 3, "speed": 9 },
+  { "name": "Spider", "attack": 2, "speed": 7 },
+  { "name": "Lich", "attack": 8, "speed": 6 },
+  { "name": "Skeleton", "attack": 4, "speed": 2 },
+  { "name": "Cyclops", "attack": 10, "speed": 1 },
+  { "name": "Slime", "attack": 3, "speed": 1 },
+  { "name": "Bird", "attack": 1, "speed": 9 }
+]

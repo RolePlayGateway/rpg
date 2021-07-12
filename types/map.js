@@ -5,11 +5,17 @@ const {
   MAP_TILE_SIZE
 } = require('../constants.js');
 
-const Event = require('events');
-const Fabric = require('@fabric/core');
+const Key = require('@fabric/core/types/key');
 const Tile = require('./tile');
 
-class Map extends Event.EventEmitter {
+class Map extends Tile {
+  /**
+   * Create an instance of {@link Map} to track players within a space.  By
+   * default, maps are 256^3, where 3 equals the number of dimensions in our
+   * grid.  Use these parameters wisely.
+   * @param  {Object} [data={}] Input data to configure the {@link Map}.
+   * @return {Map}           Low-level representation of the {@link Map}.
+   */
   constructor (data = {}) {
     super(data);
 
@@ -17,7 +23,7 @@ class Map extends Event.EventEmitter {
     this.settings = Object.assign({
       height: 256,
       width: 256,
-      depth: 256
+      depth: 32
     }, data);
 
     // Map memory: 64 byte header, 32 bytes per cell
@@ -29,11 +35,13 @@ class Map extends Event.EventEmitter {
     ));
 
     // TODO: replace with random from Fabric.Machine
-    this.key = new Fabric.Key();
+    this.key = new Key();
     console.log(`[MAP]`, 'fabric seed:', this.key.id);
     this.seed = this.key.id.toString('hex');
     console.log(`[MAP]`, 'local seed:', typeof this.seed, this.seed.length, this.seed);
     console.log(`[MAP]`, 'magic length:', 0xC0D3F33D.toString().length);
+    console.log(`[MAP]`, 'memory size (bytes):', this.size);
+
     this.data = Buffer.alloc(this.size);
 
     this.header = Buffer.alloc(HEADER_LENGTH);
@@ -61,6 +69,7 @@ class Map extends Event.EventEmitter {
 
   _dump () {
     console.log('memory:', this.data);
+    return this.data;
   }
 }
 

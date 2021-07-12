@@ -14,3 +14,8 @@ header {
 header nav {
   text-align: right;
 }
+
+canvas#canvas, rpg-canvas canvas {
+  width: 1024px;
+  height: 1024px;
+}

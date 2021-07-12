@@ -23,13 +23,14 @@
         <article>
             <pre class="prettyprint source linenums"><code>'use strict';
 
+const Events = require('events');
 const Fabric = require('@fabric/core');
 
 /**
  * Generic example.
  * @type {Object}
  */
-class Entity extends Fabric.State {
+class Entity extends Events.EventEmitter {
   /**
    * Generic template for virtual objects.
    * @param  {Object} [data={}] Pass an object to use.
@@ -87,7 +88,7 @@ module.exports = Entity;
 
 
     </div>
-    <nav><h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a></li><li><a href="RPG.html">RPG</a></li><li><a href="World.html">World</a></li></ul></nav>
+    <nav><h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Entity.html">Entity</a></li><li><a href="Map.html">Map</a></li><li><a href="Player.html">Player</a></li><li><a href="RPG.html">RPG</a></li><li><a href="Sprite.html">Sprite</a></li><li><a href="Word.html">Word</a></li><li><a href="World.html">World</a></li></ul></nav>
     <br class="clear" />
     <footer>
         <a href="https://github.com/FabricLabs/rpg">git://</a> &middot; <a href="https://chat.roleplaygateway.com/#/room/#rpg:roleplaygateway.com">Community</a>

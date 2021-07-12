@@ -1,16 +1,22 @@
 {
   "name": "@fabric/rpg",
-  "version": "0.1.0-dev",
+  "version": "0.2.0-dev",
   "description": "RPG is a template for building role-playing games.",
   "main": "types/rpg.js",
   "scripts": {
-    "build": "webpack",
+    "agents": "node scripts/agents.js",
+    "build:scripts": "webpack scripts/rpg.js",
+    "build:ui": "cd components/semantic && gulp build && cp dist/semantic.js ../../assets/scripts/semantic.js && cp dist/semantic.css ../../assets/styles/semantic.css && cd ../..",
+    "build": "npm run compile",
+    "compile": "node scripts/build.js && npm run build:scripts",
     "coverage": "nyc report --reporter html npm test",
-    "dev": "webpack-dev-server",
-    "docs": "jsdoc -c jsdoc.json types README.md -d docs && ecstatic docs",
+    "dev": "webpack-dev-server assets",
+    "docs": "npm run build && jsdoc -c jsdoc.json types README.md -d docs && ecstatic docs",
     "report:coverage": "nyc report --reporter=text-lcov > reports/coverage.lcov && codecov",
     "review:coverage": "npm run coverage && ecstatic reports/code-coverage",
-    "start": "npm run build && node rpg.js",
+    "start": "npm run compile && node scripts/node.js",
+    "static": "npm run build && ecstatic assets",
+    "telnet": "node scripts/telnet.js",
     "test": "nyc mocha tests"
   },
   "repository": {
@@ -18,9 +24,10 @@
     "url": "git+https://github.com/FabricLabs/rpg.git"
   },
   "keywords": [
-    "rpg",
+    "bitcoin",
     "fabric",
-    "game"
+    "game",
+    "rpg"
   ],
   "author": "Fabric Labs",
   "contributors": [
@@ -33,15 +40,19 @@
   },
   "homepage": "https://github.com/FabricLabs/rpg#readme",
   "dependencies": {
-    "@fabric/core": "FabricLabs/fabric#pruning",
-    "@fabric/http": "FabricLabs/web#fabric-0.1.0",
+    "@fabric/core": "martindale/fabric#peering-wallet",
     "body-parser": "^1.18.3",
+    "canvas": "^2.4.1",
     "dotparser": "^0.4.0",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
-    "level-browserify": "^2.0.0",
+    "fomantic-ui-css": "^2.8.3",
     "peer": "^0.2.10",
     "peerjs": "^0.3.18",
+    "phaser": "2.6.2",
+    "pixel-editor": "^0.2.0",
+    "semantic-ui-react": "^0.88.2",
+    "telnet2": "^0.0.1",
     "ws": "^6.1.2"
   },
   "devDependencies": {
@@ -52,7 +63,7 @@
     "nyc": "^13.1.0",
     "source-map": "^0.7.3",
     "webpack": "^4.27.1",
-    "webpack-cli": "^3.1.2",
+    "webpack-cli": "^3.3.2",
     "webpack-dev-server": "^3.1.10"
   },
   "nyc": {

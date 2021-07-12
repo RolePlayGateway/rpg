@@ -1,0 +1,65 @@
+{
+  "name": "@rpg/core",
+  "synopsis": "a powerful engine for running peer-to-peer games",
+  "interval": "60000",
+  "authority": "chat.roleplaygateway.com:9999",
+  "entropy": "6170cc426cbe663cef4342dc73860f2ab26c0c0e411c390ca064208bada65e6e",
+  "provide": ["rpg"],
+  "networking": false,
+  "secure": true,
+  "height": 256,
+  "width": 256,
+  "depth": 256,
+  "path": "./stores/chat.roleplaygateway.com",
+  "seed": "alpha beta kappa gamma delta omega",
+  "components": {
+    "index": "rpg-index"
+  },
+  "resources": {
+    "Character": {
+      "name": "Character",
+      "components": {
+        "list": "rpg-character-list",
+        "view": "rpg-character-view"
+      }
+    },
+    "Map": {
+      "name": "Map",
+      "components": {
+        "list": "rpg-map-list",
+        "view": "rpg-map-view"
+      }
+    },
+    "Tile": {
+      "name": "Tile",
+      "components": {
+        "list": "rpg-tile-list",
+        "view": "rpg-tile-view"
+      }
+    },
+    "Peer": {
+      "name": "Peer",
+      "components": {
+        "list": "rpg-peer-list",
+        "view": "rpg-peer-view"
+      }
+    },
+    "Place": {
+      "name": "Place",
+      "components": {
+        "list": "rpg-place-list",
+        "view": "rpg-place-view"
+      }
+    },
+    "Player": {
+      "name": "Player",
+      "author": "Fabric Labs",
+      "components": {
+        "list": "rpg-player-list",
+        "view": "rpg-player-view"
+      },
+      "description": "Represents the player in the game world.",
+      "site": "https://fabric.pub/"
+    }
+  }
+}

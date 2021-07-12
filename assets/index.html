@@ -1,56 +1,229 @@
 <!DOCTYPE html>
-<html lang="en" manifest="assets/cache.manifest">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>RPG</title>
-    <link rel="stylesheet" type="text/css" href="index.css" />
-  </head>
-<body>
-  <header>
-    <h1>RPG: <small><a href="https://www.roleplaygateway.com/">the many worlds</a></small></h1>
-    <p>Use `[spacebar]` to activate the currently-selected ability.  Arrow keys to move.  This is only a demo!</p>
-    <nav data-bind="controls">
-      <button data-action="generate-identity">create new character</button>
-      <button data-action="toggle-fullscreen">fullscreen</button>
-    </nav>
-    <p><code>ERA:</code> <code>dev</code></p>
-    <p><strong>Source:</strong> <a href="https://github.com/FabricLabs/rpg">fabric:github.com/FabricLabs/rpg</a>
-  </header>
-  <div data-bind="fabric">
-    <canvas id="canvas" width="400" height="300"></canvas>
-    <noscript>
-      <h3>JavaScript Renderer Available</h3>
-      <p>If you're reading this, you should consider enabling JavaScript for full effect.</p>
-      <h4>No JavaScript Required</h4>
-      <p>All hyperlinks will resolve to fully-rendered HTML documents on the legacy web.  This is done to ensure the accessibility, compatibility, and durability of game state.</p>
-    </noscript>
-  </div>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Peer-to-peer game engine, built with Fabric. &middot; @rpg/core</title>
+  <link rel="manifest" href="/assets/manifest.json">
+  <link rel="stylesheet" type="text/css" href="/styles/screen.css" />
+  <link rel="stylesheet" type="text/css" href="/styles/semantic.css" />
+</head>
+<body data-bind="cabb60825bb86ea0fd8a3bc110e03b483bd2a965fd41731ea80ba39236ba9fe8"><fabric-application route="/" integrity="sha256-G3XqfVacP8NZ0jx5a+rmRSmlRQt428vgF9VtbK16+F8=">
+  <fabric-grid>
+    <fabric-grid-row id="menu"><fabric-menu class="ui fixed inverted menu">
+  <div class="ui container"><a href="/" class="item brand">@rpg/core</a><a href="/characters" class="item">Characters</a><a href="/maps" class="item">Maps</a><a href="/tiles" class="item">Tiles</a><a href="/peers" class="item">Peers</a><a href="/places" class="item">Places</a><a href="/players" class="item">Players</a>  </div></fabric-menu></fabric-grid-row>
+    <fabric-grid-row id="details" class="ui container">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABmJLR0QA/wD/AP+gvaeTAAAAPklEQVR4nO3BMQEAAADCoPVPbQsvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgKcBnKQAAaZ1lY4AAAAASUVORK5CYII=" class="bordered" />
+      <h1><a href="/">@rpg/core</a></h1>
+      <p>Peer-to-peer game engine, built with Fabric.</p>
+      <fabric-channel></fabric-channel>
+      <nav data-bind="controls">
+        <button data-action="_generateIdentity" class="ui button">create new identity</button>
+        <button data-action="_toggleFullscreen" class="ui button">fullscreen</button>
+      </nav>
+      <div>
+        <p><code>Version:</code> <code>undefined</code></p>
+        <p><code>Clock:</code> <code data-bind="/clock">undefined</code></p>
+        <p><strong>Source:</strong> <a href="https://github.com/FabricLabs/web">fabric:github.com/FabricLabs/web</a>
+      </div>
+    </fabric-grid-row>
+    <fabric-grid-row id="settings" class="ui container">
+      <h3>Settings</h3>
+      <application-settings type="application/json"><code>{
+  "name": "@rpg/core",
+  "synopsis": "Peer-to-peer game engine, built with Fabric.",
+  "handle": "html",
+  "language": "en",
+  "components": {},
+  "offline": false,
+  "authority": "chat.roleplaygateway.com:9999",
+  "entropy": "6170cc426cbe663cef4342dc73860f2ab26c0c0e411c390ca064208bada65e6e",
+  "provide": [
+    "rpg"
+  ],
+  "secure": true,
+  "height": 256,
+  "width": 256,
+  "depth": 256,
+  "path": "./stores/chat.roleplaygateway.com",
+  "seed": "alpha beta kappa gamma delta omega",
+  "resources": {
+    "Character": {
+      "name": "Character",
+      "components": {
+        "list": "rpg-character-list",
+        "view": "rpg-character-view"
+      }
+    },
+    "Map": {
+      "name": "Map",
+      "components": {
+        "list": "rpg-map-list",
+        "view": "rpg-map-view"
+      }
+    },
+    "Tile": {
+      "name": "Tile",
+      "components": {
+        "list": "rpg-tile-list",
+        "view": "rpg-tile-view"
+      }
+    },
+    "Peer": {
+      "name": "Peer",
+      "components": {
+        "list": "rpg-peer-list",
+        "view": "rpg-peer-view"
+      }
+    },
+    "Place": {
+      "name": "Place",
+      "components": {
+        "list": "rpg-place-list",
+        "view": "rpg-place-view"
+      }
+    },
+    "Player": {
+      "name": "Player",
+      "author": "Fabric Labs",
+      "components": {
+        "list": "rpg-player-list",
+        "view": "rpg-player-view"
+      },
+      "description": "Basic user component.",
+      "site": "https://fabric.pub/"
+    }
+  }
+}</code></application-settings>
+      <h3>Resources</h3>
+      <fabric-resource-list><fabric-resource name="Component"><code>undefined</code></fabric-resource><fabric-resource name="Component"><code>undefined</code></fabric-resource><fabric-resource name="Component"><code>undefined</code></fabric-resource><fabric-resource name="Component"><code>undefined</code></fabric-resource><fabric-resource name="Component"><code>undefined</code></fabric-resource><fabric-resource name="Component"><code>undefined</code></fabric-resource></fabric-resource-list>
+      <h3>Circuit</h3>
+      <fabric-circuit>
+  <fabric-code-snippet data-bind="45c2876dd8b930ce7a68e0f30f34f247ed06f79d270a7aa04f3bcb0beb79e1e9" data-integrity="sha256-RcKHbdi5MM56aODzDzTyR+0G950nCnqgTzvLC+t54ek=">digraph "fsm" {
+  "init";
+}</fabric-code-snippet>
+  <fabric-canvas>
+    <fabric-grid>
+      <fabric-grid-row>
+        <textarea data-bind="45c2876dd8b930ce7a68e0f30f34f247ed06f79d270a7aa04f3bcb0beb79e1e9" placeholder="Purity contract here...">digraph "fsm" {
+  "init";
+}</textarea>
+      </fabric-grid-row>
+      <fabric-grid-row>
+        <button data-action="_step">step</button>
+      </fabric-grid-row>
+      <fabric-grid-row>
+        <fabric-svg id="svg"></fabric-svg>
+      </fabric-grid-row>
+      <fabric-grid-row>
+        <canvas id="output" data-bind="output"></canvas>
+        <canvas id="canvas" data-bind="45c2876dd8b930ce7a68e0f30f34f247ed06f79d270a7aa04f3bcb0beb79e1e9"></canvas>
+      </fabric-grid-row>
+  </fabric-canvas>
+</fabric-circuit>
+      <h3>State <small><code>a31357775f1f5e11bb231b3b388b0f3490b3fc9b3385a8a95d04085ff19c4115</code></small></h3>
+      <pre><code>{
+  "name": "@rpg/core",
+  "synopsis": "Peer-to-peer game engine, built with Fabric.",
+  "authority": "chat.roleplaygateway.com:9999",
+  "entropy": "6170cc426cbe663cef4342dc73860f2ab26c0c0e411c390ca064208bada65e6e",
+  "provide": [
+    "rpg"
+  ],
+  "secure": true,
+  "height": 256,
+  "width": 256,
+  "depth": 256,
+  "path": "./stores/chat.roleplaygateway.com",
+  "seed": "alpha beta kappa gamma delta omega",
+  "resources": {
+    "Character": {
+      "name": "Character",
+      "components": {
+        "list": "rpg-character-list",
+        "view": "rpg-character-view"
+      }
+    },
+    "Map": {
+      "name": "Map",
+      "components": {
+        "list": "rpg-map-list",
+        "view": "rpg-map-view"
+      }
+    },
+    "Tile": {
+      "name": "Tile",
+      "components": {
+        "list": "rpg-tile-list",
+        "view": "rpg-tile-view"
+      }
+    },
+    "Peer": {
+      "name": "Peer",
+      "components": {
+        "list": "rpg-peer-list",
+        "view": "rpg-peer-view"
+      }
+    },
+    "Place": {
+      "name": "Place",
+      "components": {
+        "list": "rpg-place-list",
+        "view": "rpg-place-view"
+      }
+    },
+    "Player": {
+      "name": "Player",
+      "author": "Fabric Labs",
+      "components": {
+        "list": "rpg-player-list",
+        "view": "rpg-player-view"
+      },
+      "description": "Basic user component.",
+      "site": "https://fabric.pub/"
+    }
+  }
+}</code></pre>
+    </fabric-grid-row>
+    <fabric-grid-row id="router" class="ui container">
+      <fabric-router>
+        <fabric-grid-row>
+          <input type="text" name="address" value="./stores/chat.roleplaygateway.com" />
+        </fabric-grid-row>
+        <fabric-grid-row id="content"><fabric-resource name="BlankPage"><code>{"name":"BlankPage","types":{},"blobs":{},"states":{},"addresses":{},"collections":{},"tips":{}}</code></fabric-resource></fabric-grid-row>
+      </fabric-router>
+    </fabric-grid-row>
+    <fabric-grid-row id="composite" class="ui container">
+      <noscript>
+        <h3>JavaScript Renderer Available</h3>
+        <p>If you're reading this, you should consider enabling JavaScript for full effect.</p>
+      </noscript>
+      <fabric-column id="canvas">
+        <fabric-canvas></fabric-canvas>
+      </fabric-column>
+      <fabric-column id="peers">
+        <fabric-peer-list></fabric-peer-list>
+      </fabric-column>
+    </fabric-grid-row>
+  </fabric-grid>
   <!-- [0]: README [dot] md -->
   <!--
-# RPG `@fabric/rpg`
-## STOP HERE AND READ ME FIRST!
-Before continuing, let us be the first to welcome you to the Source.  While it
-might be confusing at first, there's a lot you can learn if you make the time.
-
-Use this URI:
-> https://www.roleplaygateway.com/
-
-From there, links like `hub.roleplaygateway.com` might "pop up" from time to
-time.  With a bit of navigating around, you can earn credit for your progress.
-
-Continue:
-> https://chat.roleplaygateway.com/
-
-Offline:
-> https://www.roleplaygateway.com/medals/beta-tester
-
-Remember: never be afraid to explore!  Curiosity might have killed the cat, but
-that's why he had nine lives.
-
-Good luck, have fun (`gl;hf o/`), and enjoy!
-
-                                           — the RPG team
--->
-  <script src="index.js" type="text/javascript"></script>
-</body>
+  > # RPG `@fabric/rpg`
+  > ## STOP HERE AND READ ME FIRST!
+  > Before continuing, let us be the first to welcome you to the Source.  While it
+  > might be confusing at first, there's a lot you can learn if you make the time.
+  > Use this URI:
+  > > https://www.roleplaygateway.com/
+  > From there, links like `hub.roleplaygateway.com` might "pop up" from time to
+  > time.  With a bit of navigating around, you can earn credit for your progress.
+  > Continue:
+  > > https://chat.roleplaygateway.com/
+  > Offline:
+  > > https://www.roleplaygateway.com/medals/beta-tester
+  > Remember: never be afraid to explore!  Curiosity might have killed the cat, but
+  > that's why he had nine lives.
+  > Good luck, have fun (`gl;hf o/`), and enjoy!
+  >                                          — the RPG team
+  -->
+  <script type="text/javascript" src="/scripts/index.min.js" defer></script>
+</fabric-application></body>
 </html>

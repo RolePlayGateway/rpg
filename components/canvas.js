@@ -109,7 +109,7 @@ class Canvas extends Fabric.App {
   }
 
   render () {
-    return `<canvas width="${this.config.width}" height="${this.config.height}" integrity="sha256:${this.id}" />`;
+    return `<rpg-canvas><canvas width="${this.config.width}" height="${this.config.height}" integrity="sha256:${this.id}"></canvas>${history.render()}</rpg-canvas>`;
   }
 }
 
